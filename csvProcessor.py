@@ -26,7 +26,7 @@ class Processor:
             input_reader = csv.DictReader(inputFile, fieldnames=fieldnames)
             input_data = list(input_reader)
 
-            new_data_format = self._click_amount(input_data)
+            new_data_format = self._convert_date(input_data)
             country_alpha3_code = self._country_decoder(new_data_format)
             click_amount = self._click_amount(country_alpha3_code)
             sorted_data = self._sorting(click_amount)
@@ -37,6 +37,17 @@ class Processor:
             output_writer.writeheader()
             for row in sorted_data:
                 output_writer.writerow(row)
+
+    @staticmethod
+    def _convert_date(input_data):
+        for row in input_data:
+            try:
+                splitted_date = row['date'].split('/')
+                row['date'] = '-'.join([splitted_date[2], splitted_date[0], splitted_date[1]])
+            except IndexError:
+                return "Wrong date format. Should be dd/mm/yyyy"
+
+        return input_data
 
     @staticmethod
     def _country_decoder(input_data):
@@ -92,17 +103,6 @@ class Processor:
                 pass
 
         return sorted_data
-
-
-def _convert_date(input_data):
-    for row in input_data:
-        try:
-            splitted_date = row['date'].split('/')
-            row['date'] = '-'.join([splitted_date[2], splitted_date[0], splitted_date[1]])
-        except IndexError:
-            return "Wrong date format. Should be dd/mm/yyyy"
-
-    return input_data
 
 
 Processor('example.csv', 'output.csv').csv_processor()
