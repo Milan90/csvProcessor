@@ -4,12 +4,13 @@ import pycountry
 
 class Processor:
 
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, input_file_path, output_file_path):
+        self.input_file_path = input_file_path
+        self.output_file_path = output_file_path
 
-    def csv_processor(self, input_file_path, output_file_path):
+    def csv_processor(self):
 
-        with open(input_file_path, 'r', newline='') as inputFile:
+        with open(self.input_file_path, 'r', newline='') as inputFile:
             fieldnames = ['date', 'state name', 'impressions', 'CTR']
             input_reader = csv.DictReader(inputFile, fieldnames=fieldnames)
             input_data = list(input_reader)
@@ -19,7 +20,7 @@ class Processor:
             click_amount = self.click_amount(country_alpha3_code)
             sorted_data = self.sorting(click_amount)
 
-        with open(output_file_path, "w", newline="") as outputFile:
+        with open(self.output_file_path, "w", newline="") as outputFile:
             fieldnames = ['date', 'country', 'impressions', 'number of clicks']
             output_writer = csv.DictWriter(outputFile, fieldnames=fieldnames)
             output_writer.writeheader()
@@ -31,8 +32,8 @@ class Processor:
 
         for row in input_data:
             try:
-                splitedDate = row['date'].split('/')
-                row['date'] = '-'.join([splitedDate[2], splitedDate[0], splitedDate[1]])
+                splited_date = row['date'].split('/')
+                row['date'] = '-'.join([splited_date[2], splited_date[0], splited_date[1]])
             except IndexError:
                 return "Wrong date format. Should be dd/MM/YY"
 
@@ -87,4 +88,8 @@ class Processor:
             except IndexError:
                 pass
 
-        return input_data
+        return sorted_data
+
+
+a = Processor('example.csv', 'output.csv')
+a.csv_processor()
