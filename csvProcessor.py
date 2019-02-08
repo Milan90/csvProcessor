@@ -9,16 +9,18 @@ class Processor:
         self.output_file_path = output_file_path
 
     def csv_processor(self):
+        """
 
+        """
         with open(self.input_file_path, 'r', newline='') as inputFile:
             fieldnames = ['date', 'state name', 'impressions', 'CTR']
             input_reader = csv.DictReader(inputFile, fieldnames=fieldnames)
             input_data = list(input_reader)
 
-            new_data_format = self.convert_date(input_data)
-            country_alpha3_code = self.country_decoder(new_data_format)
-            click_amount = self.click_amount(country_alpha3_code)
-            sorted_data = self.sorting(click_amount)
+            new_data_format = self._click_amount(input_data)
+            country_alpha3_code = self._country_decoder(new_data_format)
+            click_amount = self._click_amount(country_alpha3_code)
+            sorted_data = self._sorting(click_amount)
 
         with open(self.output_file_path, "w", newline="") as outputFile:
             fieldnames = ['date', 'country', 'impressions', 'number of clicks']
@@ -28,19 +30,19 @@ class Processor:
                 output_writer.writerow(row)
 
     @staticmethod
-    def convert_date(input_data):
+    def _convert_date(input_data):
 
         for row in input_data:
             try:
-                splited_date = row['date'].split('/')
-                row['date'] = '-'.join([splited_date[2], splited_date[0], splited_date[1]])
+                splitted_date = row['date'].split('/')
+                row['date'] = '-'.join([splitted_date[2], splitted_date[0], splitted_date[1]])
             except IndexError:
                 return "Wrong date format. Should be dd/MM/YY"
 
         return input_data
 
     @staticmethod
-    def country_decoder(input_data):
+    def _country_decoder(input_data):
 
         for row in input_data:
             try:
@@ -55,7 +57,7 @@ class Processor:
         return input_data
 
     @staticmethod
-    def click_amount(input_data):
+    def _click_amount(input_data):
         for i in range(len(input_data)):
 
             try:
@@ -63,12 +65,12 @@ class Processor:
                 input_data[i]['number of clicks'] = cliks
                 del input_data[i]['CTR']
             except KeyError:
-                print("key error")
+                pass
 
         return input_data
 
     @staticmethod
-    def sorting(input_data):
+    def _sorting(input_data):
 
         sorted_data = sorted(input_data, key=lambda i: (i['date'], i['country']))
 
