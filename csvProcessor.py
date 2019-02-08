@@ -3,6 +3,11 @@ import pycountry
 
 
 class Processor:
+    """
+    Processor class which accepts two parameters:
+    :param input_file_path: path to csv file you wont to convert like path/to/file/fileName.csv
+    :param output_file_path: record path and proccesed data file name like record/path/fileName.csv
+    """
 
     def __init__(self, input_file_path, output_file_path):
         self.input_file_path = input_file_path
@@ -10,6 +15,10 @@ class Processor:
 
     def csv_processor(self):
         """
+            This function onverts the csv file in the following way:
+
+                input file format:
+                mm/dd/yyyy, state name, impressions, CTR
 
         """
         with open(self.input_file_path, 'r', newline='') as inputFile:
@@ -30,20 +39,12 @@ class Processor:
                 output_writer.writerow(row)
 
     @staticmethod
-    def _convert_date(input_data):
-
-        for row in input_data:
-            try:
-                splitted_date = row['date'].split('/')
-                row['date'] = '-'.join([splitted_date[2], splitted_date[0], splitted_date[1]])
-            except IndexError:
-                return "Wrong date format. Should be dd/MM/YY"
-
-        return input_data
-
-    @staticmethod
     def _country_decoder(input_data):
+        """
 
+        :param input_data:
+        :return:
+        """
         for row in input_data:
             try:
                 subdivision = pycountry.subdivisions.lookup(row['state name'])
@@ -93,5 +94,15 @@ class Processor:
         return sorted_data
 
 
-a = Processor('example.csv', 'output.csv')
-a.csv_processor()
+def _convert_date(input_data):
+    for row in input_data:
+        try:
+            splitted_date = row['date'].split('/')
+            row['date'] = '-'.join([splitted_date[2], splitted_date[0], splitted_date[1]])
+        except IndexError:
+            return "Wrong date format. Should be dd/mm/yyyy"
+
+    return input_data
+
+
+Processor('example.csv', 'output.csv').csv_processor()
