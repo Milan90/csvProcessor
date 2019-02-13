@@ -9,11 +9,7 @@ class Processor:
     :param output_file_path: record path and proccesed data file name like record/path/fileName.csv
     """
 
-    def __init__(self, input_file_path, output_file_path):
-        self.input_file_path = input_file_path
-        self.output_file_path = output_file_path
-
-    def csv_processor(self):
+    def csv_processor(self, input_file_path, output_file_path):
         """
             This function onverts the csv file in the following way:
 
@@ -21,7 +17,7 @@ class Processor:
                 mm/dd/yyyy, state name, impressions, CTR
 
         """
-        with open(self.input_file_path, 'r', newline='') as inputFile:
+        with open(input_file_path, 'r', newline='') as inputFile:
             fieldnames = ['date', 'state name', 'impressions', 'CTR']
             input_reader = csv.DictReader(inputFile, fieldnames=fieldnames)
             input_data = list(input_reader)
@@ -31,7 +27,7 @@ class Processor:
             click_amount = self._click_amount(country_alpha3_code)
             sorted_data = self._sorting(click_amount)
 
-        with open(self.output_file_path, "w", newline="") as outputFile:
+        with open(output_file_path, "w", newline="") as outputFile:
             fieldnames = ['date', 'country', 'impressions', 'number of clicks']
             output_writer = csv.DictWriter(outputFile, fieldnames=fieldnames)
             output_writer.writeheader()
@@ -105,4 +101,4 @@ class Processor:
         return sorted_data
 
 
-Processor('example.csv', 'output.csv').csv_processor()
+Processor().csv_processor('example.csv', 'output.csv')
